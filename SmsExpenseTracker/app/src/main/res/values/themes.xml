@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme — Compose handles actual theming; this is the window background only -->
+    <style name="Theme.SmsExpenseTracker" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#FF1565C0</item>
+        <item name="android:windowBackground">#FFFFFFFF</item>
+    </style>
+</resources>

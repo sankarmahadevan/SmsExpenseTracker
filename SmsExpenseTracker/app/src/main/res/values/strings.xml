@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SMS Expense Tracker</string>
+    <string name="permission_rationale">This app reads incoming bank SMS to auto-detect UPI, ATM, and credit card transactions. All data stays on your device — no internet access.</string>
+</resources>

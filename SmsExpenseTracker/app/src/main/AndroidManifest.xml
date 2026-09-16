@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Receive new incoming SMS (works on all Android versions) -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <!--
+        READ_SMS: only useful if your app is the default SMS app (Android 10+).
+        We keep it for Android 8/9 legacy SMS inbox access.
+    -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- Required for showing notifications on Android 13+ -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Intentionally NO android.permission.INTERNET -->
+
+    <application
+        android:name=".SmsExpenseApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmsExpenseTracker">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            BroadcastReceiver for incoming SMS.
+            android:permission restricts who can send us this broadcast (only the system).
+            priority="999" ensures we receive it before most other apps.
+        -->
+        <receiver
+            android:name=".receiver.SmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+</manifest>
