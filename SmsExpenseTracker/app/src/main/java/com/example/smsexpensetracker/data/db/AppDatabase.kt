@@ -1,8 +1,22 @@
 package com.example.smsexpensetracker.data.db
 
 import android.content.Context
-import androidx.room.*
-import com.example.smsexpensetracker.data.model.*
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+
+// Explicitly import models instead of using wildcard *
+import com.example.smsexpensetracker.data.model.Transaction
+import com.example.smsexpensetracker.data.model.Setting
+import com.example.smsexpensetracker.data.model.TransactionType
+import com.example.smsexpensetracker.data.model.TransactionCategory
+import com.example.smsexpensetracker.data.model.AccountType
+
+// Add explicit imports for DAOs if they are in another package (e.g., com.example.smsexpensetracker.data.db.dao)
+// import com.example.smsexpensetracker.data.db.dao.TransactionDao
+// import com.example.smsexpensetracker.data.db.dao.SettingsDao
 
 class Converters {
     @TypeConverter fun fromTransactionType(v: TransactionType) = v.name
