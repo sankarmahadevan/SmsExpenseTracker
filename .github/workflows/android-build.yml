@@ -13,6 +13,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -22,16 +23,24 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.2
+
+      # Prevent a corrupted jar cache from poisoning saved CI caches
+      - name: Clear Gradle jar instrumentation cache
+        run: rm -rf ~/.gradle/caches/jars-9
+
       - name: Remove machine-specific local.properties
         run: rm -f local.properties
+
       - name: Generate Gradle wrapper
         run: |
           if [ ! -f gradlew ]; then
             gradle wrapper --gradle-version 8.2
           fi
           chmod +x gradlew
+
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
