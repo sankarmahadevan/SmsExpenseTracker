@@ -3,7 +3,7 @@ package com.example.smsexpensetracker
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.activity.FragmentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +26,13 @@ import com.example.smsexpensetracker.ui.settings.SettingsViewModelFactory
 import com.example.smsexpensetracker.ui.theme.SmsExpenseTheme
 import com.example.smsexpensetracker.ui.transactions.AddEditTransactionScreen
 import com.example.smsexpensetracker.ui.transactions.TransactionViewModelFactory
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.DisposableEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.fragment.app.FragmentActivity
+import com.example.smsexpensetracker.ui.auth.AuthGateScreen
 
 object Routes {
     const val PERMISSION = "permission"
@@ -36,7 +43,7 @@ object Routes {
     fun addEdit(id: Long = -1L) = "add_edit/$id"
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -55,6 +62,25 @@ fun AppNavigation() {
     val context = LocalContext.current
     val app     = context.applicationContext as SmsExpenseApp
     val nav     = rememberNavController()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    var isUnlocked by rememberSaveable { mutableStateOf(false) }
+
+    // Re-lock whenever the app goes to background (Activity onPause/onStop)
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) {
+                isUnlocked = false
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    if (!isUnlocked) {
+        AuthGateScreen(onAuthenticated = { isUnlocked = true })
+        return
+    }
 
     val smsGranted = ContextCompat.checkSelfPermission(
         context, Manifest.permission.RECEIVE_SMS
