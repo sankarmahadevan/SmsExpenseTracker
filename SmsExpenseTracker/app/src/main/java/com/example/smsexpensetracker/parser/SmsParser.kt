@@ -122,7 +122,7 @@ object SmsParser {
     }
 
     private fun classify(body: String, amountPaise: Long, bankName: String): Transaction? {
-        // Priority: CC payment > CC spend > ATM > UPI credit > UPI debit > savings credit
+        // Priority: CC payment > CC spend > ATM > UPI debit > UPI credit > savings credit
         return when {
             CC_PAYMENT_PATTERNS.any  { it.containsMatchIn(body) } -> Transaction(
                 amountPaise = amountPaise, type = TransactionType.DEBIT,
@@ -142,17 +142,18 @@ object SmsParser {
                 accountType = AccountType.SAVINGS, bankName = bankName,
                 description = extractDescription(body, "ATM Withdrawal"), rawSms = body
             )
-            UPI_CREDIT_PATTERNS.any  { it.containsMatchIn(body) } -> Transaction(
-                amountPaise = amountPaise, type = TransactionType.CREDIT,
-                category = TransactionCategory.UPI,
-                accountType = AccountType.SAVINGS, bankName = bankName,
-                description = extractDescription(body, "UPI Received"), rawSms = body
-            )
+            // ── moved above UPI_CREDIT_PATTERNS ──
             UPI_DEBIT_PATTERNS.any   { it.containsMatchIn(body) } -> Transaction(
                 amountPaise = amountPaise, type = TransactionType.DEBIT,
                 category = TransactionCategory.UPI,
                 accountType = AccountType.SAVINGS, bankName = bankName,
                 description = extractDescription(body, "UPI Sent"), rawSms = body
+            )
+            UPI_CREDIT_PATTERNS.any  { it.containsMatchIn(body) } -> Transaction(
+                amountPaise = amountPaise, type = TransactionType.CREDIT,
+                category = TransactionCategory.UPI,
+                accountType = AccountType.SAVINGS, bankName = bankName,
+                description = extractDescription(body, "UPI Received"), rawSms = body
             )
             SAVINGS_CREDIT_PATTERNS.any { it.containsMatchIn(body) } -> Transaction(
                 amountPaise = amountPaise, type = TransactionType.CREDIT,
