@@ -88,8 +88,13 @@ object SmsParser {
         Regex("""minimum\s+(?:due|payment)""", RegexOption.IGNORE_CASE),
         Regex("""statement\s+(?:is\s+)?(?:ready|generated|available)""", RegexOption.IGNORE_CASE),
         Regex("""pre.approved|loan\s+offer|apply\s+now""", RegexOption.IGNORE_CASE),
-        Regex("""reward\s+point|cashback\s+(?:of|earned)""", RegexOption.IGNORE_CASE),
+        Regex("""reward\s+point|cashback""", RegexOption.IGNORE_CASE),                  // widened: was "cashback (of|earned)"
         Regex("""your\s+(?:account|card)\s+(?:is\s+)?(?:activated|linked|registered)""", RegexOption.IGNORE_CASE),
+        // ── new: telecom / utility / DTH bill-generation notices ──
+        Regex("""bill\s+(?:for\s+your.*?)?(?:has\s+been\s+)?generated""", RegexOption.IGNORE_CASE),
+        Regex("""current\s+month\s+payable\s+amount""", RegexOption.IGNORE_CASE),
+        Regex("""plan\s+rental""", RegexOption.IGNORE_CASE),
+        Regex("""bill\s+summary""", RegexOption.IGNORE_CASE),
     )
 
     // ── Public API ─────────────────────────────────────────────────────────
